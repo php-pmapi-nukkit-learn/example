@@ -1,5 +1,7 @@
 <?php
 
+define('FONT_FILE', './bicubik.ttf');
+
 // Создание изображения
 $img = imagecreatetruecolor(800, 525);
 
@@ -28,9 +30,12 @@ imagerectangle($img, 690, 400, 700, 180, $white);
 imagefilltoborder($img, 691, 201, $white, $white);
 
 // PHP и подчеркивание
-imagefttext($img, 100, 0, 240, 200, $white, './bicubik.ttf', 'PHP');
+imagefttext($img, 100, 0, 240, 200, $white, FONT_FILE, 'PHP');
 imagerectangle($img, 200, 220, 600, 230, $white);
 imagefilltoborder($img, 201, 221, $white, $white);
+
+
+imagefttext($img, 60, 0, 200, 330, $white, FONT_FILE, 'PHP GD2');
 
 imagepng($img, 'result.png');
 
