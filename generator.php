@@ -35,7 +35,47 @@ imagerectangle($img, 200, 220, 600, 230, $white);
 imagefilltoborder($img, 201, 221, $white, $white);
 
 
-imagefttext($img, 60, 0, 200, 330, $white, FONT_FILE, 'PHP GD2');
+$config = [
+    'size' => 60,
+    'offset-x' => 0,
+    'offset-y' => 0,
+    'text' => '',
+];
+
+$next = null;
+foreach($argv as $arg) {
+    switch ($arg) {
+
+        case '--text':
+            $next = 'text';
+            break;
+
+        case '--font-size':
+            $next = 'size';
+            break;
+
+        case '--offset-x':
+            $next = 'offset-x';
+            break;
+
+        case '--offset-y':
+            $next = 'offset-y';
+            break;
+
+        default:
+            if (!is_null($next) && isset($config[$next])) {
+                $config[$next] = $arg;
+            }
+    }
+}
+
+// На случай, если текст обернули не в двойной апостроф ("), а в одинарный (')
+$config['text'] = str_replace('\n', "\n", $config['text']);
+
+imagefttext($img, $config['size'], 0,
+    200 + $config['offset-x'],
+    330 + $config['offset-y'],
+    $white, FONT_FILE, $config['text']);
 
 imagepng($img, 'result.png');
 
