@@ -50,6 +50,9 @@ foreach ($argv as $arg) {
     }
 }
 
+// На случай, если текст обернули не в двойной апостроф ("), а в одинарный (')
+$config['text'] = str_replace('\n', "\n", $config['text']);
+
 // Создание цвета фона
 if($config['isJava']) {
     $bgColor = imagecolorallocate($img, 119, 20, 128);
@@ -90,9 +93,6 @@ imagettftext($img, 100, 0, $centerX - $bbox[4] / 2, 200, $white, FONT_FILE, $tit
 
 imagerectangle($img, 200, 220, 600, 230, $white);
 imagefilltoborder($img, 201, 221, $white, $white);
-
-// На случай, если текст обернули не в двойной апостроф ("), а в одинарный (')
-$config['text'] = str_replace('\n', "\n", $config['text']);
 
 $bbox = imagettfbbox($config['size'], 0, FONT_FILE, $config['text']);
 imagefttext($img, $config['size'], 0,
