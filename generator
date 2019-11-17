@@ -6,8 +6,56 @@ define('FONT_FILE', './bicubik.ttf');
 // Создание изображения
 $img = imagecreatetruecolor(800, 525);
 
+$config = [
+    'size' => 60,
+    'offset-x' => 0,
+    'offset-y' => 0,
+    'text' => '',
+    'jsJava' => false,
+];
+
+$next = null;
+foreach ($argv as $arg) {
+    switch ($arg) {
+
+        case '--text':
+            $next = 'text';
+            break;
+
+        case '--font-size':
+            $next = 'size';
+            break;
+
+        case '--offset-x':
+            $next = 'offset-x';
+            break;
+
+        case '--offset-y':
+            $next = 'offset-y';
+            break;
+
+        case '--java':
+            $config['isJava'] = true;
+            break;
+
+        default:
+            // Такой подход для демонстрации использования switch внутри цикла
+            if(is_null($next) || !isset($config[$next])) {
+                // Так мы говорим интерпретатору о том, что нужно не продолжить выполнение конструкции switch..case,
+                // а перейти на следующую итерацию цикла (цифра "2" после "continue")
+                continue 2;
+            }
+
+            $config[$next] = $arg;
+    }
+}
+
 // Создание цвета фона
-$bgColor = imagecolorallocate($img, 32, 64, 85);
+if($config['isJava']) {
+    $bgColor = imagecolorallocate($img, 119, 20, 128);
+} else {
+    $bgColor = imagecolorallocate($img, 32, 64, 85);
+}
 // и его заливка. Заливаем от указанных координат
 imagefill($img, 0, 0, $bgColor);
 
@@ -30,51 +78,25 @@ imagefilltoborder($img, 101, 401, $white, $white);
 imagerectangle($img, 690, 400, 700, 180, $white);
 imagefilltoborder($img, 691, 201, $white, $white);
 
-// PHP и подчеркивание
-imagefttext($img, 100, 0, 240, 200, $white, FONT_FILE, 'PHP');
+$centerX = imagesx($img) / 2;
+
+// PHP/Java и подчеркивание
+$title = 'PHP';
+if($config['isJava']) {
+    $title = 'Java';
+}
+$bbox = imageftbbox(100, 0, FONT_FILE, $title);
+imagettftext($img, 100, 0, $centerX - $bbox[4] / 2, 200, $white, FONT_FILE, $title);
+
 imagerectangle($img, 200, 220, 600, 230, $white);
 imagefilltoborder($img, 201, 221, $white, $white);
-
-
-$config = [
-    'size' => 60,
-    'offset-x' => 0,
-    'offset-y' => 0,
-    'text' => '',
-];
-
-$next = null;
-foreach($argv as $arg) {
-    switch ($arg) {
-
-        case '--text':
-            $next = 'text';
-            break;
-
-        case '--font-size':
-            $next = 'size';
-            break;
-
-        case '--offset-x':
-            $next = 'offset-x';
-            break;
-
-        case '--offset-y':
-            $next = 'offset-y';
-            break;
-
-        default:
-            if (!is_null($next) && isset($config[$next])) {
-                $config[$next] = $arg;
-            }
-    }
-}
 
 // На случай, если текст обернули не в двойной апостроф ("), а в одинарный (')
 $config['text'] = str_replace('\n', "\n", $config['text']);
 
+$bbox = imagettfbbox($config['size'], 0, FONT_FILE, $config['text']);
 imagefttext($img, $config['size'], 0,
-    200 + $config['offset-x'],
+    ($centerX - $bbox[4] / 2) + $config['offset-x'],
     330 + $config['offset-y'],
     $white, FONT_FILE, $config['text']);
 
