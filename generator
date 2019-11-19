@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-define('FONT_FILE', __DIR__ . './bicubik.ttf');
+define('FONT_FILE', __DIR__ . '/bicubik.ttf');
 
 // Создание изображения
 $img = imagecreatetruecolor(800, 525);
